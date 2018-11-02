@@ -1,0 +1,164 @@
+% CV template for the ConTeXt document processing system. Allows specifiction
+% of multiple configurations and/or langugages in one document and control the
+% processing via the command line.
+
+% Personal details at the start of the CV
+\definelabelclass[information][0]
+% Headings for the categories of CV entries
+\definelabelclass[category][0]
+% Auto-generated text (internal)
+\definelabelclass[multilang][0]
+
+% Select language via command-line argument
+\mainlanguage[\getdocumentargument{lang}]
+
+% Language agnostic
+\setupmultilangtext[footersep={$\coloncolon$}]
+
+% English
+\setuplanguage[en][date={dd,month,year}]
+\setupmultilangtext[en][%
+    cv={Curriculum Vitae},%
+    page=page,%
+    pageof=of,%
+    since=since,%
+    until=until,%
+    name=Name,%
+    address=Address,%
+    phone=Phone,%
+    email=E-mail,%
+    contact=Contact,%
+    birth=Born,%
+    nationality=Nationality%
+]
+
+% Deutsch
+\setuplanguage[de][date={dd,{.},mm,{.},year}]
+\setupmultilangtext[de][%
+    cv=Lebenslauf,%
+    page=Seite,%
+    pageof=von,%
+    since=seit,%
+    until=bis,%
+    name=Name,%
+    address=Adresse,%
+    phone=Telefon,%
+    email=E-Mail,%
+    contact=Kontakt,%
+    birth=Geboren,%
+    nationality=Nationalität%
+]
+
+% Text in left column is colored dark grey by default
+\setupcolors[state=start]
+\definecolor[leftcol][r=.3,g=.3,b=.3]
+
+% Document setup
+\setuppapersize[A4]
+\setuplayout[backspace=25mm,width=160mm,header=0mm,footer=6mm,footerdistance=8mm]
+
+% Text setup
+\setupbodyfont[11pt,sans]
+\setupinterlinespace[line=1.25em]
+\setupwhitespace[medium]
+
+% Footer setup: border at the top, name on the right, pagenumber on the right
+\setupbackgrounds[footer][text][topframe=on]
+\setupfootertexts%
+    [\multilangtext{cv} \multilangtext{footersep} \informationtext{name}]%
+    [\multilangtext{page} {\pagenumber} \multilangtext{pageof} {\totalnumberofpages}]
+
+% The macro \testpage is used to avoid pagebreaks between category headings and
+% entries. The parameter should allow at least one entry beneath a heading, but
+% might have to tweaked for certain layouts.
+\def\testpageparameter{10}
+
+% Typesetting the CV: general table layout
+\setupTABLE[split=yes,frame=off,loffset=0pt,roffset=0pt,boffset=4pt,toffset=1pt,align=flushleft]
+\setupTABLE[c][1][width=40mm,style=leftcol,roffset=2pt]
+\setupTABLE[c][2][width=120mm]
+
+% CV Title
+\define\cv{\framed[frame=off,offset=0pt]{\switchtobodyfont[1.8em]\multilangtext{cv}}\blank[25pt]}
+
+% Personal information: setup content \setupinformationtext first, then insert
+% the desired fields in an information environment with \information[key].
+% A set of default keys is specified, new keys can be added by setting the
+% corresponding multilangtext values for each language.
+\def\startinformation#1\stopinformation{\bTABLE #1 \eTABLE}
+\def\information[#1]{
+    \bTR
+        \bTD \multilangtext{#1} \eTD
+        \bTD \informationtext{#1} \eTD
+    \eTR
+}
+
+% CV entries are organized into categories. The category heading is hidden if
+% there is no visible entry, by rendering the entries into a box first and then
+% checking if there is anything in the box. The emptiness test is adapted from
+% https://tex.stackexchange.com/questions/53068/, but uses \hd instead of \wd
+% since it works better with ConTeXt's modes for some reason.
+\def\startcategory[#1]#2\stopcategory{
+    \setbox0=\hbox{\bTABLE#2\eTABLE\unskip}\ifdim\hd0=0pt
+        \empty
+    \else
+        \testpage[\testpageparameter]% make sure there is enough room to fit heading and at least one entry
+        \bTABLE
+            \bTR
+                \bTD[nc=2,toffset=20pt,boffset=8pt,style=no] {\switchtobodyfont[1.3em]\categorytext{#1}} \eTD
+            \eTR
+            #2 % rows of entries
+        \eTABLE
+    \fi
+}
+
+% An entry is associated with a language and three pieces of content: a text
+% for the left column, a summary for the right column and (optionally) a more
+% detailed description of the entry under the summary, typeset in a smaller
+% font: \entry[lang]{leftcol}{summary}{details}
+% The language association is implemented using modes, which is possible
+% because ConTeXt automatically creates a mode for the selected language.
+\def\entry[#1]#2#3#4{
+    \startmode[**#1]
+        \bTR
+            \bTD #2 \eTD
+            \bTD #3 \ifx#4\empty \empty \else \break {\switchtobodyfont[0.85em] #4} \fi \eTD
+        \eTR
+    \stopmode
+}
+
+% Specialized entry whose text in the left column denotes a period of time:
+% \periodentry[lang]{from}{to}{title}{summary}{details}. Either from or to can
+% be omitted and the template will automatically apapt the display of the time
+% period in the left column.
+\def\periodentry[#1]#2#3#4#5{
+    \entry[#1]{
+        \def\temptwo{#2}
+        \def\tempthree{#3}
+        \ifx\temptwo\empty
+            \multilangtext{until} #3
+        \else
+            \ifx\tempthree\empty
+                \multilangtext{since} #2
+            \else
+                #2 - #3
+            \fi
+        \fi
+    }{#4}{#5}
+}
+
+% End the CV with the current date and place for a signature (either empty
+% space if printed or via a picture of the signature (specified with the
+% optional argument).
+\def\dateandsignature#1{
+    \def\temp{#1}
+    \bTABLE[split=no,frame=off,offset=0mm]
+        \bTR
+            \bTD[width=160mm,height=25mm,align=low,boffset=-1mm] \ifx\temp\empty \empty \else \externalfigure[#1][height=12mm] \fi \eTD
+        \eTR
+        \bTR
+            \bTD[style=black,align=high] {\switchtobodyfont[0.85em]\informationtext{name}, \currentdate} \eTD
+        \eTR
+    \eTABLE
+}
+
