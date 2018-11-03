@@ -56,9 +56,11 @@
 % Document setup
 \setuppapersize[A4]
 \setuplayout[backspace=25mm,width=160mm,header=0mm,footer=6mm,footerdistance=8mm]
+\setupinteraction[state=start,color=black,contrastcolor=black,style=,focus=standard]
 
 % Text setup
 \setupbodyfont[11pt,sans]
+\definebodyfontenvironment[11pt][a=1.8em,b=1.3em,c=0.85em]
 \setupinterlinespace[line=1.25em]
 \setupwhitespace[medium]
 
@@ -79,7 +81,7 @@
 \setupTABLE[c][2][width=120mm]
 
 % CV Title
-\define\cv{\framed[frame=off,offset=0pt]{\switchtobodyfont[1.8em]\multilangtext{cv}}\blank[25pt]}
+\define\cv{\framed[frame=off,offset=0pt]{\tfa\multilangtext{cv}}\blank[25pt]}
 
 % Personal information: setup content \setupinformationtext first, then insert
 % the desired fields in an information environment with \information[key].
@@ -105,7 +107,7 @@
         \testpage[\testpageparameter]% make sure there is enough room to fit heading and at least one entry
         \bTABLE
             \bTR
-                \bTD[nc=2,toffset=20pt,boffset=8pt,style=no] {\switchtobodyfont[1.3em]\categorytext{#1}} \eTD
+                \bTD[nc=2,toffset=20pt,boffset=8pt,style=no] {\tfb\categorytext{#1}} \eTD
             \eTR
             #2 % rows of entries
         \eTABLE
@@ -122,7 +124,7 @@
     \startmode[**#1]
         \bTR
             \bTD #2 \eTD
-            \bTD #3 \ifx#4\empty \empty \else \break {\switchtobodyfont[0.85em] #4} \fi \eTD
+            \bTD #3 \ifx#4\empty \empty \else \break {\tfc #4} \fi \eTD
         \eTR
     \stopmode
 }
@@ -157,7 +159,7 @@
             \bTD[width=160mm,height=25mm,align=low,boffset=-1mm] \ifx\temp\empty \empty \else \externalfigure[#1][height=12mm] \fi \eTD
         \eTR
         \bTR
-            \bTD[style=black,align=high] {\switchtobodyfont[0.85em]\informationtext{name}, \currentdate} \eTD
+            \bTD[style=black,align=high] {\tfc\informationtext{name}, \currentdate} \eTD
         \eTR
     \eTABLE
 }
