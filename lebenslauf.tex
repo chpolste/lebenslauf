@@ -1,8 +1,8 @@
-% CV template for the ConTeXt document processing system. Allows specifiction
-% of multiple configurations and/or langugages in one document and control the
+% CV preset for the ConTeXt document processing system. Allows specifiction of
+% multiple configurations and/or langugages in one document and control the
 % processing via the command line.
 
-% Personal details at the start of the CV
+% Personal details in the header of the CV
 \definelabelclass[information][0]
 % Headings for the categories of CV entries
 \definelabelclass[category][0]
@@ -13,128 +13,179 @@
 \mainlanguage[\getdocumentargument{lang}]
 
 % Language agnostic
-\setupmultilangtext[footersep={$\coloncolon$}]
+\setupmultilangtext[to=--]
 
 % English
 \setuplanguage[en][date={dd,month,year}]
 \setupmultilangtext[en][%
-    cv={Curriculum Vitae},%
-    page=page,%
-    pageof=of,%
+    contact=Contact,%
     since=since,%
     until=until,%
-    name=Name,%
-    address=Address,%
-    phone=Phone,%
-    email=E-mail,%
-    contact=Contact,%
-    birth=Born,%
-    nationality=Nationality%
+    to=--,%
 ]
 
 % Deutsch
 \setuplanguage[de][date={dd,{.},mm,{.},year}]
 \setupmultilangtext[de][%
-    cv=Lebenslauf,%
-    page=Seite,%
-    pageof=von,%
+    contact=Kontakt,%
     since=seit,%
     until=bis,%
-    name=Name,%
-    address=Adresse,%
-    phone=Telefon,%
-    email=E-Mail,%
-    contact=Kontakt,%
-    birth=Geboren,%
-    nationality=Nationalität%
+    to=--,%
 ]
 
 % Text in left column is colored dark grey by default
 \setupcolors[state=start]
-\definecolor[leftcol][r=.3,g=.3,b=.3]
 
-% Document setup
-\setuppapersize[A4]
-\setuplayout[backspace=25mm,width=160mm,header=0mm,footer=6mm,footerdistance=8mm]
+% Clickable hyperlinks in the pdf
 \setupinteraction[state=start,color=black,contrastcolor=black,style=,focus=standard]
 
 % Text setup
-\setupbodyfont[11pt,sans]
-\definebodyfontenvironment[11pt][a=1.8em,b=1.3em,c=0.85em]
-\setupinterlinespace[line=1.25em]
+\setupbodyfont[11pt,heros,ss]
+\setupinterlinespace[line=1.3em]
 \setupwhitespace[medium]
 
-% Footer setup: border at the top, name on the right, pagenumber on the right
-\setupbackgrounds[footer][text][topframe=on]
-\setupfootertexts%
-    [\multilangtext{cv} \multilangtext{footersep} \informationtext{name}]%
-    [\multilangtext{page} {\pagenumber} \multilangtext{pageof} {\totalnumberofpages}]
+% Headings
+\setuphead[subject][style=\tfb,textcommand=\groupedcommand{}{\filler[SectionRightRule]}]
+% https://tex.stackexchange.com/questions/497352
+\definefiller[SectionRule][alternative=rule,color=header-fg-dark,height=5pt,depth=-4pt]
+\definefiller[SectionRightRule][SectionRule][left=\quad,right=\zerowidthnobreakspace] 
 
 % The macro \testpage is used to avoid pagebreaks between category headings and
 % entries. The parameter should allow at least one entry beneath a heading, but
 % might have to tweaked for certain layouts.
 \def\testpageparameter{10}
 
-% Typesetting the CV: general table layout
-\setupTABLE[split=yes,frame=off,loffset=0pt,roffset=0pt,boffset=4pt,toffset=1pt,align=flushleft]
-\setupTABLE[c][1][width=40mm,style=leftcol,roffset=2pt]
-\setupTABLE[c][2][width=120mm]
-
-% CV Title
-\define\cv{\framed[frame=off,offset=0pt]{\tfa\multilangtext{cv}}\blank[25pt]}
-
-% Personal information: setup content \setupinformationtext first, then insert
-% the desired fields in an information environment with \information[key].
-% A set of default keys is specified, new keys can be added by setting the
-% corresponding multilangtext values for each language.
-\def\startinformation#1\stopinformation{\bTABLE #1 \eTABLE}
-\def\information[#1]{
-    \bTR
-        \bTD \multilangtext{#1} \eTD
-        \bTD \informationtext{#1} \eTD
-    \eTR
+% Global document setup
+\setuppapersize[A4]
+\setuplayout[
+    backspace=10mm,
+    topspace=10mm,
+    width=190mm,
+    height=277mm,
+    margin=0mm,
+    footer=0mm,
+    header=12mm,
+    headerdistance=12mm,
+]
+% Header with name and contact information on every page
+\setupheadertexts[\directsetup{headertext}]
+\startsetups [headertext]
+    \hfill
+    \setupcolors[textcolor=header-fg-dark]
+    \bTABLE[option=stretch,frame=off]
+        \setupTABLE[c][1][align=flushleft,width=140mm]
+        \setupTABLE[c][2][align=flushright,width=50mm]
+        \bTR
+            \bTD \vfill \startcolor[header-fg-light] \tfb \bf \informationtext{name} \stopcolor \eTD
+            \bTD \informationtext{phone}\break\informationtext{email} \eTD
+        \eTR
+     \eTABLE
+\stopsetups
+% Add a bit of color to the header
+\definelayer[bg][x=0mm,y=0mm,width=\paperwidth, height=\paperheight,state=continue]
+\setlayer[bg][]{%
+    \framed[
+        width=210mm,
+        height=25mm,
+        frame=off,
+        bottomframe=on,
+        framecolor=highlight,
+        rulethickness=2pt,
+        background=color,
+        backgroundcolor=header-bg,
+    ]{}
 }
+
+% First page setup
+\definelayout[1][
+    header=25mm,
+]
+% Use page marker to make the first page special:
+% https://wiki.contextgarden.net/FO_Page_Layout#Changing_Headers_and_Footers_for_the_Firstpage
+\setuphead[part][header=coverheader,placehead=empty] 
+% Show more information on the first page
+\definetext[coverheader][header][\directsetup{coverheadertext}]
+\startsetups [coverheadertext]
+    \hfill
+    \setupcolors[textcolor=header-fg-dark]
+    \bTABLE[frame=off]
+        \setupTABLE[c][1][align=flushleft,width=140mm] % 95mm with picture TODO
+        \setupTABLE[c][2][align=flushleft,width=50mm,leftframe=on,framecolor=highlight,rulethickness=1pt,loffset=3mm]
+        \bTR
+            \bTD[nr=2,boffset=4mm] \vfill \startcolor[header-fg-light] \tfd \bf \informationtext{name} \stopcolor \eTD
+            \bTD \startcolor[highlight] \multilangtext{contact} \stopcolor \eTD
+        \eTR
+        \bTR
+            \bTD \informationtext{address} \eTD
+        \eTR
+        \bTR
+            \bTD \informationtext{headera}\break\informationtext{headerb} \eTD
+            \bTD \informationtext{phone}\break\informationtext{email} \eTD
+        \eTR
+     \eTABLE
+\stopsetups
+% Larger box at the top of the first page
+\definelayer[coverbg][x=0mm,y=0mm,width=\paperwidth,height=\paperheight]
+\setlayer[coverbg][]{%
+    \framed[
+        width=210mm,
+        height=45mm,
+        frame=off,
+        bottomframe=on,
+        framecolor=highlight,
+        rulethickness=2pt,
+        background=color,
+        backgroundcolor=header-bg,
+    ]{}
+}
+
+\setupbackgrounds[page][][background={coverbg,bg}]
+
 
 % CV entries are organized into categories. The category heading is hidden if
 % there is no visible entry, by rendering the entries into a box first and then
-% checking if there is anything in the box. The emptiness test is adapted from
-% https://tex.stackexchange.com/questions/53068/, but uses \hd instead of \wd
-% since it works better with ConTeXt's modes for some reason.
+% checking if there is anything in the box. The emptiness test is from
+% https://tex.stackexchange.com/questions/53068/.
 \def\startcategory[#1]#2\stopcategory{
-    \setbox0=\hbox{\bTABLE#2\eTABLE\unskip}\ifdim\hd0=0pt
+    \setbox0=\hbox{#2\unskip}\ifdim\wd0=0pt
         \empty
     \else
         \testpage[\testpageparameter]% make sure there is enough room to fit heading and at least one entry
-        \bTABLE
-            \bTR
-                \bTD[nc=2,toffset=20pt,boffset=8pt,style=no] {\tfb\categorytext{#1}} \eTD
-            \eTR
-            #2 % rows of entries
-        \eTABLE
+        \startsubject[title=\categorytext{#1}]
+            \bTABLE
+                \setupTABLE[split=yes,frame=off,offset=0mm,boffset=2mm,align=flushleft]
+                \setupTABLE[c][1][width=45mm]
+                \setupTABLE[c][2][width=145mm]
+                \bTR[boffset=0mm] \bTD\eTD \bTD\eTD \eTR % ensure that there are always 2 columns
+                #2
+            \eTABLE
+        \stopsubject
     \fi
 }
 
-% An entry is associated with a language and three pieces of content: a text
-% for the left column, a summary for the right column and (optionally) a more
-% detailed description of the entry under the summary, typeset in a smaller
-% font: \entry[lang]{leftcol}{summary}{details}
-% The language association is implemented using modes, which is possible
-% because ConTeXt automatically creates a mode for the selected language.
-\def\entry[#1]#2#3#4{
+% The language association for all entries is implemented using modes, which is
+% possible because ConTeXt automatically creates a mode for the selected
+% language.
+
+% \tableentry[lang]{leftcol}{headline}{details}
+% A table entry has three pieces of content: a text for the left column,
+% a headline for the right column and (optionally) a more detailed description
+% of the entry under the headline, typeset in a smaller font.
+\def\tableentry[#1]#2#3#4{
     \startmode[**#1]
         \bTR
-            \bTD #2 \eTD
-            \bTD #3 \ifx#4\empty \empty \else \break {\tfc #4} \fi \eTD
+            \bTD[style=highlight,roffset=3mm] #2 \eTD
+            \bTD #3 \ifx#4\empty \empty \else \break { \tfx #4} \fi \eTD
         \eTR
     \stopmode
 }
 
-% Specialized entry whose text in the left column denotes a period of time:
-% \periodentry[lang]{from}{to}{title}{summary}{details}. Either from or to can
-% be omitted and the template will automatically apapt the display of the time
-% period in the left column.
+% \periodentry[lang]{from}{to}{title}{headline}{details}
+% Specialized entry whose text in the left column denotes a period of time.
+% Either from or to can be left empty and the template will automatically apapt
+% the display of the time period in the left column.
 \def\periodentry[#1]#2#3#4#5{
-    \entry[#1]{
+    \tableentry[#1]{
         \def\temptwo{#2}
         \def\tempthree{#3}
         \ifx\temptwo\empty
@@ -143,24 +194,22 @@
             \ifx\tempthree\empty
                 \multilangtext{since} #2
             \else
-                #2 - #3
+                #2 \multilangtext{to} #3
             \fi
         \fi
     }{#4}{#5}
 }
 
-% End the CV with the current date and place for a signature (either empty
-% space if printed or via a picture of the signature (specified with the
-% optional argument).
-\def\dateandsignature#1{
-    \def\temp{#1}
-    \bTABLE[split=no,frame=off,offset=0mm]
+% \listentry[lang]{headline}{details}
+\def\listentry[#1]#2#3{
+    \startmode[**#1]
         \bTR
-            \bTD[width=160mm,height=25mm,align=low,boffset=-1mm] \ifx\temp\empty \empty \else \externalfigure[#1][height=12mm] \fi \eTD
+            \bTD[nc=2]
+                \startitemize[1,joinedup][color=highlight]
+                    \item #2 \ifx#3\empty \empty \else \break { \tfx #3} \fi
+                \stopitemize
+            \eTD
         \eTR
-        \bTR
-            \bTD[style=black,align=high] {\tfc\informationtext{name}, \currentdate} \eTD
-        \eTR
-    \eTABLE
+    \stopmode
 }
 

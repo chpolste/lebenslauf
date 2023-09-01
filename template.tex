@@ -1,0 +1,85 @@
+\definecolor[highlight][darkcyan]
+\definecolor[header-bg][black]
+\definecolor[header-fg-light][white]
+\definecolor[header-fg-dark][lightgray]
+
+\input{lebenslauf} % Do not delete. Set up colors above, write text below.
+
+
+% Language-agnostic information
+\setupinformationtext[
+    name={Firstname Lastname},
+    phone={+0 555 123456},
+    email={email@example.com},
+]
+
+% Information in English
+\setupinformationtext[en][
+    address={{Street 1}\break{12345 Town, Country}},
+    headera={Born 00 Month 0000 in Place},
+    headerb={citizenship},
+]
+\setupcategorytext[en][
+    education={Education},
+    experience={Experience},
+    skills={Skills},
+]
+
+% Informationen auf Deutsch
+\setupinformationtext[de][
+    address={{Straße 1}\break{12345 Stadt, Land}},
+    headera={geboren am 00.00.0000 in Ort},
+    headerb={Staatsbürgerschaft},
+]
+\setupcategorytext[de][
+    education={Ausbildung},
+    experience={Erfahrung},
+    skills={Kenntnisse},
+]
+
+
+\usemodule[ipsum] % Can delete, only here to provide fake text
+
+\starttext
+
+    \part{}% do not delete this
+
+
+    \startcategory[education]
+
+        \periodentry[en]{MM YYYY}{MM YYYY}{Bachelor of Typesetting at some university.}{Something about grades, subjects, ...}
+        \periodentry[de]{MM JJJJ}{MM JJJJ}{Bachelor of Typesetting an einer Universität.}{Irgendwas über Noten und Kurse, ...}
+
+        \periodentry[en]{MM YYYY}{MM YYYY}{School.}{}
+        \periodentry[de]{MM JJJJ}{MM JJJJ}{Schule.}{}
+
+    \stopcategory
+
+
+    \startcategory[experience]
+
+        \periodentry[en]{MM JJJJ}{}{Entry without an end date.}{\ipsum}
+        \periodentry[de]{MM JJJJ}{}{Eintrag ohne Enddatum.}{\ipsum}
+
+        \periodentry[en]{MM JJJJ}{MM JJJJ}{Entry with both a start and end date.}{\ipsum}
+        \periodentry[de]{MM JJJJ}{MM JJJJ}{Eintrag mit Start- und Enddatum.}{\ipsum}
+
+        \periodentry[en]{}{MM JJJJ}{Entry without a start date.}{\ipsum}
+        \periodentry[de]{}{MM JJJJ}{Eintrag ohne Startdatum.}{\ipsum}
+
+    \stopcategory
+
+
+    \startcategory[skills]
+
+        \listentry[en]{Languages: multiple.}{}
+        \listentry[de]{Sprachen: mehrere.}{}
+
+        \listentry[en]{Typesetting.}{CVs with \ConTeXt!}
+        \listentry[de]{Schriftsatz.}{Lebensläufe mit \ConTeXt!}
+
+    \stopcategory
+
+\stoptext
+
+
