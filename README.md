@@ -3,6 +3,7 @@
 CV template for the ConTeXt document processing system. Manage multiple CV configurations (multiple languages, conditionally shown entries) with a single file and command line arguments.
 
 
+![example CV created from template](example.png)
 
 
 ## Usage
