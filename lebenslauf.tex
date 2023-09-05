@@ -68,16 +68,14 @@
 % Header with name and contact information on every page
 \setupheadertexts[\directsetup{headertext}]
 \startsetups [headertext]
-    \hfill
     \setupcolors[textcolor=header-fg-dark]
-    \bTABLE[option=stretch,frame=off]
-        \setupTABLE[c][1][align=flushleft,width=140mm]
-        \setupTABLE[c][2][align=flushright,width=50mm]
-        \bTR
-            \bTD \vfill \startcolor[header-fg-light] \tfb \bf \informationtext{name} \stopcolor \eTD
-            \bTD \informationtext{phone}\break\informationtext{email} \eTD
-        \eTR
-     \eTABLE
+    \framed[frame=off,align=flushleft]{%
+        \startcolor[header-fg-light] \tfb \bf \informationtext{name} \stopcolor
+    }
+    \hfill
+    \framed[frame=off,align=flushright]{%
+        \informationtext{phone}\break\informationtext{email}
+    }
 \stopsetups
 % Add a bit of color to the header
 \definelayer[bg][x=0mm,y=0mm,width=\paperwidth, height=\paperheight,state=continue]
@@ -96,7 +94,8 @@
 
 % First page setup
 \definelayout[1][
-    header=25mm,
+    header=30mm,
+    topspace=5mm,
 ]
 % Use page marker to make the first page special:
 % https://wiki.contextgarden.net/FO_Page_Layout#Changing_Headers_and_Footers_for_the_Firstpage
@@ -104,23 +103,23 @@
 % Show more information on the first page
 \definetext[coverheader][header][\directsetup{coverheadertext}]
 \startsetups [coverheadertext]
-    \hfill
     \setupcolors[textcolor=header-fg-dark]
-    \bTABLE[frame=off]
-        \setupTABLE[c][1][align=flushleft,width=140mm] % 95mm with picture TODO
-        \setupTABLE[c][2][align=flushleft,width=50mm,leftframe=on,framecolor=highlight,rulethickness=1pt,loffset=3mm]
-        \bTR
-            \bTD[nr=2,boffset=4mm] \vfill \startcolor[header-fg-light] \tfd \bf \informationtext{name} \stopcolor \eTD
-            \bTD \startcolor[highlight] \multilangtext{contact} \stopcolor \eTD
-        \eTR
-        \bTR
-            \bTD \informationtext{address} \eTD
-        \eTR
-        \bTR
-            \bTD \informationtext{headera}\break\informationtext{headerb} \eTD
-            \bTD \informationtext{phone}\break\informationtext{email} \eTD
-        \eTR
-     \eTABLE
+    \framed[frame=off,align=flushleft,height=35mm]{%
+        \vfill
+        \startcolor[header-fg-light]\tfd\bf\informationtext{name}\stopcolor
+        \blank[5mm]
+        \informationtext{headera}\break
+        \informationtext{headerb}
+    }
+    \hfill
+    \framed[frame=off,leftframe=on,framecolor=highlight,rulethickness=1pt,align=flushleft,loffset=3mm]{%
+        \startcolor[highlight]\multilangtext{contact}\stopcolor
+        \blank[2.5mm]
+        \informationtext{address}
+        \blank[2.5mm]
+        \informationtext{phone}\break
+        \informationtext{email}
+    }
 \stopsetups
 % Larger box at the top of the first page
 \definelayer[coverbg][x=0mm,y=0mm,width=\paperwidth,height=\paperheight]
@@ -139,7 +138,8 @@
 
 \setupbackgrounds[page][][background={coverbg,bg}]
 
-
+% Global table settings so they can be overwritten when desired
+\setupTABLE[split=yes,frame=off]
 % CV entries are organized into categories. The category heading is hidden if
 % there is no visible entry, by rendering the entries into a box first and then
 % checking if there is anything in the box. The emptiness test is from
@@ -151,7 +151,7 @@
         \testpage[\testpageparameter]% make sure there is enough room to fit heading and at least one entry
         \startsubject[title=\categorytext{#1}]
             \bTABLE
-                \setupTABLE[split=yes,frame=off,offset=0mm,boffset=2mm,align=flushleft]
+                \setupTABLE[offset=0mm,boffset=2mm,align=flushleft]
                 \setupTABLE[c][1][width=45mm]
                 \setupTABLE[c][2][width=145mm]
                 \bTR[boffset=0mm] \bTD\eTD \bTD\eTD \eTR % ensure that there are always 2 columns
